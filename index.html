@@ -1,0 +1,2750 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sigurado — Civic Navigation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --teal-900: #0b3a45;
+        --teal-800: #0f4c5c;
+        --teal-700: #145968;
+        --teal-50: #e8f0f2;
+        --green-500: #5bae7e;
+        --green-600: #4a9c6c;
+        --green-50: #ecf6ef;
+        --neutral-bg: #f7f4ed;
+        --neutral-card: #ffffff;
+        --ink-900: #15222a;
+        --ink-700: #2e3f48;
+        --ink-500: #6a7880;
+        --ink-300: #a8b2b8;
+        --ink-100: #e4e6e5;
+        --warm-line: #ebe5d7;
+        --shadow-soft:
+          0 1px 2px rgba(15, 76, 92, 0.04), 0 8px 24px rgba(15, 76, 92, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      html,
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: #efeae0;
+        color: var(--ink-900);
+        font-weight: 400;
+        line-height: 1.45;
+        letter-spacing: -0.01em;
+      }
+
+      /* Language toggle — hide the *inactive* language only. Using
+         body:not(...) keeps descendant display rules (e.g. .doc-info span
+         { display: block }) intact for the *active* language. */
+      body:not(.lang-tl) .tl,
+      body:not(.lang-tl) .tl-block {
+        display: none;
+      }
+      body.lang-tl .en,
+      body.lang-tl .en-block {
+        display: none;
+      }
+      /* Language picker screen always shows both options regardless of toggle */
+      .s-language .en,
+      .s-language .tl {
+        display: inline !important;
+      }
+
+      .stage {
+        min-height: 100vh;
+        padding: 56px 24px 80px;
+        background:
+          radial-gradient(
+            circle at 15% 10%,
+            rgba(91, 174, 126, 0.08),
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 85% 80%,
+            rgba(15, 76, 92, 0.06),
+            transparent 40%
+          ),
+          #efeae0;
+      }
+
+      .header {
+        max-width: 1280px;
+        margin: 0 auto 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+
+      .header-left {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .header h1 {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--teal-900);
+        letter-spacing: -0.02em;
+      }
+
+      .header h1 span {
+        color: var(--green-600);
+      }
+
+      .header p {
+        font-size: 13px;
+        color: var(--ink-500);
+        max-width: 420px;
+      }
+
+      .grid {
+        max-width: 1280px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 36px 28px;
+        justify-items: center;
+      }
+
+      /* Phone frame */
+      .phone {
+        width: 360px;
+        height: 760px;
+        background: var(--neutral-bg);
+        border-radius: 44px;
+        border: 10px solid #14202a;
+        box-shadow:
+          0 30px 60px -20px rgba(15, 76, 92, 0.35),
+          0 8px 24px rgba(15, 76, 92, 0.15);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 110px;
+        height: 26px;
+        background: #14202a;
+        border-radius: 0 0 18px 18px;
+        z-index: 20;
+      }
+
+      .status-bar {
+        padding: 14px 28px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink-900);
+        flex-shrink: 0;
+      }
+
+      .status-bar .icons {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+      }
+
+      .status-bar svg {
+        display: block;
+      }
+
+      .screen {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .screen-label {
+        position: absolute;
+        bottom: -32px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--ink-500);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      /* Top app bar */
+      .topbar {
+        padding: 8px 24px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+
+      .topbar .back {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(15, 76, 92, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--teal-800);
+      }
+
+      .topbar .step {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-500);
+        letter-spacing: 0.06em;
+      }
+
+      .topbar .step b {
+        color: var(--teal-800);
+        font-weight: 600;
+      }
+
+      .progress {
+        height: 3px;
+        width: 100%;
+        background: rgba(15, 76, 92, 0.08);
+        margin-top: 14px;
+        border-radius: 2px;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      .progress > span {
+        display: block;
+        height: 100%;
+        background: var(--green-500);
+        border-radius: 2px;
+      }
+
+      /* === SCREEN 1: Location === */
+      .s-location {
+        padding: 20px 28px 24px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .s-location::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Language picker screen */
+      .s-language {
+        padding: 20px 28px 24px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .s-language h2 {
+        margin-top: 140px;
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--teal-900);
+        letter-spacing: -0.025em;
+        line-height: 1.25;
+        text-align: center;
+      }
+
+      .s-language h2 .alt {
+        display: block;
+        font-size: 16px;
+        color: var(--ink-500);
+        font-weight: 400;
+        margin-top: 6px;
+        letter-spacing: -0.01em;
+      }
+
+      .s-language .lang-options {
+        margin-top: 36px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .lang-option {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 20px;
+        background: var(--neutral-card);
+        border: 1.5px solid var(--ink-100);
+        border-radius: 16px;
+        cursor: pointer;
+        font-family: inherit;
+        text-align: left;
+        transition:
+          border-color 0.15s ease,
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+
+      .lang-option:hover {
+        border-color: var(--teal-700);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .lang-option .flag {
+        width: 46px;
+        height: 32px;
+        border-radius: 6px;
+        overflow: hidden;
+        flex-shrink: 0;
+        display: block;
+        box-shadow: 0 0 0 1px rgba(15, 76, 92, 0.08);
+      }
+
+      .lang-option .flag svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .lang-option .lang-text {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .lang-option .lang-text b {
+        display: block;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--ink-900);
+        letter-spacing: -0.01em;
+      }
+
+      .lang-option .lang-text span {
+        font-size: 12px;
+        color: var(--ink-500);
+        margin-top: 2px;
+        display: block;
+      }
+
+      .lang-option .arrow-ico {
+        color: var(--ink-300);
+        flex-shrink: 0;
+      }
+
+      .s-language .lang-foot {
+        margin-top: auto;
+        padding-bottom: 12px;
+        font-size: 11px;
+        color: var(--ink-500);
+        text-align: center;
+        line-height: 1.5;
+      }
+
+      .wordmark {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--teal-800);
+        letter-spacing: -0.01em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .wordmark .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--green-500);
+        box-shadow: 0 0 0 4px rgba(91, 174, 126, 0.18);
+      }
+
+      .compass {
+        margin: 64px auto 40px;
+        width: 124px;
+        height: 124px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .compass .ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 1px dashed rgba(15, 76, 92, 0.25);
+      }
+
+      .compass .ring.r2 {
+        inset: 18px;
+        border-style: solid;
+        border-color: rgba(15, 76, 92, 0.1);
+      }
+      .compass .ring.r3 {
+        inset: 38px;
+        border-style: solid;
+        border-color: rgba(15, 76, 92, 0.06);
+      }
+
+      .compass .pin {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--teal-800);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 0 8px 24px rgba(15, 76, 92, 0.35);
+        z-index: 2;
+      }
+
+      .compass .pulse {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 2px solid var(--green-500);
+        opacity: 0.4;
+      }
+
+      .s-location h2 {
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--teal-900);
+        letter-spacing: -0.025em;
+        line-height: 1.2;
+        text-align: center;
+        margin-bottom: 14px;
+      }
+
+      .s-location p.lede {
+        font-size: 14px;
+        color: var(--ink-500);
+        text-align: center;
+        line-height: 1.55;
+        max-width: 280px;
+        margin: 0 auto;
+      }
+
+      .s-location .actions {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding-bottom: 24px;
+      }
+
+      .btn-primary {
+        background: var(--teal-800);
+        color: white;
+        border: none;
+        padding: 18px 24px;
+        border-radius: 16px;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(15, 76, 92, 0.22);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: var(--teal-800);
+        border: none;
+        padding: 14px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        border-bottom: 1px solid transparent;
+      }
+
+      .btn-secondary u {
+        text-decoration: none;
+        border-bottom: 1px solid var(--ink-300);
+        padding-bottom: 2px;
+      }
+
+      /* === Conversation screens === */
+      .s-convo {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 0;
+      }
+
+      .convo-body {
+        flex: 1;
+        padding: 28px 28px 20px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .convo-body::-webkit-scrollbar {
+        display: none;
+      }
+
+      .answered {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-bottom: 28px;
+      }
+
+      .qa-receded {
+        opacity: 0.55;
+      }
+
+      .qa-receded .q {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-500);
+        letter-spacing: 0.04em;
+        margin-bottom: 4px;
+      }
+
+      .qa-receded .a {
+        font-size: 14px;
+        color: var(--ink-700);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .qa-receded .a::before {
+        content: "";
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--green-500);
+        flex-shrink: 0;
+      }
+
+      .current-q {
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--teal-900);
+        letter-spacing: -0.025em;
+        line-height: 1.22;
+        margin-bottom: 6px;
+      }
+
+      .q-hint {
+        font-size: 13px;
+        color: var(--ink-500);
+        margin-bottom: 24px;
+      }
+
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .option {
+        background: var(--neutral-card);
+        border: 1px solid var(--warm-line);
+        border-radius: 14px;
+        padding: 16px 18px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--ink-900);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        letter-spacing: -0.01em;
+        transition:
+          border-color 0.15s ease,
+          background 0.15s ease,
+          transform 0.08s ease;
+      }
+
+      .option:active {
+        transform: scale(0.985);
+      }
+      .check {
+        cursor: pointer;
+        transition:
+          background 0.15s ease,
+          border-color 0.15s ease;
+      }
+      .back,
+      .fab-next,
+      .ready-cta,
+      .btn-primary,
+      .btn-light,
+      .btn-ghost-dark,
+      .btn-secondary {
+        cursor: pointer;
+      }
+      .fab-next:active,
+      .ready-cta:active,
+      .btn-primary:active,
+      .btn-light:active {
+        transform: translateY(1px);
+      }
+
+      .option .meta {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--ink-500);
+        margin-top: 2px;
+        letter-spacing: 0;
+      }
+
+      .option .label-col {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .option .arrow {
+        color: var(--ink-300);
+      }
+
+      .option.selected {
+        border-color: var(--teal-800);
+        background: var(--teal-50);
+        color: var(--teal-900);
+      }
+
+      .option.selected .arrow {
+        color: var(--teal-800);
+      }
+
+      .convo-footer {
+        padding: 18px 28px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid var(--warm-line);
+        background: var(--neutral-bg);
+        flex-shrink: 0;
+      }
+
+      .convo-footer .skip {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink-500);
+        white-space: nowrap;
+      }
+
+      .fab-next {
+        background: var(--teal-800);
+        color: white;
+        border: none;
+        height: 52px;
+        padding: 0 24px;
+        border-radius: 28px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(15, 76, 92, 0.25);
+      }
+
+      .fab-next.disabled {
+        background: rgba(15, 76, 92, 0.18);
+        color: rgba(255, 255, 255, 0.85);
+        box-shadow: none;
+      }
+
+      /* === Checklist === */
+      .s-checklist {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0;
+        background: var(--neutral-bg);
+      }
+
+      .s-checklist::-webkit-scrollbar {
+        display: none;
+      }
+
+      .checklist-hero {
+        background: var(--teal-800);
+        color: white;
+        padding: 18px 26px 26px;
+        position: relative;
+      }
+
+      .checklist-hero .topbar {
+        padding: 0;
+      }
+      .checklist-hero .topbar .back {
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+      }
+      .checklist-hero .topbar .step {
+        color: rgba(255, 255, 255, 0.6);
+      }
+      .checklist-hero .topbar .step b {
+        color: white;
+      }
+
+      .badge-row {
+        margin-top: 22px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.85);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 9px;
+        background: rgba(91, 174, 126, 0.22);
+        border: 1px solid rgba(91, 174, 126, 0.5);
+        border-radius: 100px;
+        color: #b8e2c7;
+        font-size: 10px;
+      }
+
+      .checklist-hero h2 {
+        margin-top: 12px;
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+
+      .checklist-hero h2 small {
+        display: block;
+        font-size: 13px;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.65);
+        margin-top: 6px;
+        letter-spacing: 0;
+      }
+
+      .signatory-card {
+        margin-top: 18px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #5bae7e, #3d8b5c);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .avatar::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 11px;
+        height: 11px;
+        background: var(--green-500);
+        border-radius: 50%;
+        border: 2px solid var(--teal-800);
+      }
+
+      .signatory-card .who {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .signatory-card .who b {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: white;
+      }
+
+      .signatory-card .who span {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .signatory-card .status-pill {
+        background: rgba(91, 174, 126, 0.2);
+        color: #c5e8d2;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 5px 9px;
+        border-radius: 100px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      /* checklist body */
+      .checklist-body {
+        padding: 22px 26px 28px;
+      }
+
+      .section-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--ink-500);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .section-label .count {
+        color: var(--teal-800);
+      }
+
+      .doc-list {
+        background: white;
+        border: 1px solid var(--warm-line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      .doc-item {
+        display: flex;
+        gap: 14px;
+        padding: 16px;
+        border-bottom: 1px solid var(--warm-line);
+        align-items: flex-start;
+      }
+
+      .doc-item:last-child {
+        border-bottom: none;
+      }
+
+      .check {
+        width: 22px;
+        height: 22px;
+        border-radius: 7px;
+        border: 1.5px solid var(--ink-300);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .check.done {
+        background: var(--green-500);
+        border-color: var(--green-500);
+        color: white;
+      }
+
+      .doc-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .doc-info b {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink-900);
+        display: block;
+        letter-spacing: -0.005em;
+      }
+
+      .doc-info span {
+        font-size: 12px;
+        color: var(--ink-500);
+        margin-top: 3px;
+        display: block;
+        line-height: 1.4;
+      }
+
+      .doc-info .tag {
+        display: inline-block;
+        margin-top: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 3px 7px;
+        border-radius: 4px;
+        background: var(--green-50);
+        color: var(--green-600);
+        letter-spacing: 0.04em;
+      }
+
+      .doc-info .tag.optional {
+        background: rgba(15, 76, 92, 0.06);
+        color: var(--ink-500);
+      }
+
+      /* fee row */
+      .fee-card {
+        margin-top: 20px;
+        background: white;
+        border: 1px solid var(--warm-line);
+        border-radius: 16px;
+        padding: 18px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .fee-card .label {
+        font-size: 13px;
+        color: var(--ink-500);
+      }
+
+      .fee-card .amount {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--teal-900);
+        letter-spacing: -0.02em;
+      }
+
+      .fee-card .amount small {
+        font-size: 12px;
+        color: var(--ink-500);
+        font-weight: 400;
+        margin-left: 4px;
+      }
+
+      .updated-row {
+        margin-top: 16px;
+        padding: 12px 14px;
+        background: rgba(15, 76, 92, 0.04);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 11px;
+        color: var(--ink-500);
+        line-height: 1.4;
+      }
+
+      .updated-row b {
+        color: var(--teal-800);
+        font-weight: 600;
+      }
+
+      .ready-cta {
+        margin-top: 22px;
+        background: var(--green-500);
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 18px;
+        border-radius: 16px;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(91, 174, 126, 0.32);
+      }
+
+      /* === Confirmation === */
+      .s-confirm {
+        height: 100%;
+        background: linear-gradient(180deg, #0f4c5c 0%, #0b3a45 100%);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        position: relative;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .s-confirm::-webkit-scrollbar {
+        display: none;
+      }
+
+      .s-confirm::before {
+        content: "";
+        position: absolute;
+        top: -100px;
+        left: -50px;
+        right: -50px;
+        height: 360px;
+        background: radial-gradient(
+          circle,
+          rgba(91, 174, 126, 0.25),
+          transparent 60%
+        );
+        pointer-events: none;
+      }
+
+      .s-confirm .topbar {
+        padding: 8px 24px 0;
+      }
+      .s-confirm .topbar .back {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      .s-confirm .topbar .step {
+        color: rgba(255, 255, 255, 0.6);
+      }
+      .s-confirm .topbar .step b {
+        color: white;
+      }
+
+      .confirm-mark {
+        margin: 70px auto 28px;
+        width: 96px;
+        height: 96px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: var(--green-500);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+          0 0 0 12px rgba(91, 174, 126, 0.18),
+          0 0 0 26px rgba(91, 174, 126, 0.08),
+          0 18px 40px rgba(91, 174, 126, 0.4);
+        position: relative;
+        z-index: 2;
+      }
+
+      .confirm-headline {
+        text-align: center;
+        font-size: 38px;
+        font-weight: 600;
+        letter-spacing: -0.035em;
+        line-height: 1;
+        padding: 0 28px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .confirm-sub {
+        margin-top: 14px;
+        text-align: center;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.55;
+        max-width: 270px;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        z-index: 2;
+      }
+
+      .summary-card {
+        margin: 36px 24px 0;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 18px;
+        padding: 18px 18px;
+        backdrop-filter: blur(8px);
+        position: relative;
+        z-index: 2;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        font-size: 13px;
+      }
+
+      .summary-row + .summary-row {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .summary-row .key {
+        color: rgba(255, 255, 255, 0.55);
+      }
+
+      .summary-row .val {
+        color: white;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .confirm-footer {
+        margin-top: auto;
+        padding: 0 24px 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .btn-light {
+        background: white;
+        color: var(--teal-900);
+        border: none;
+        padding: 18px;
+        border-radius: 16px;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .btn-ghost-dark {
+        background: transparent;
+        color: rgba(255, 255, 255, 0.7);
+        border: none;
+        padding: 12px;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* search input on location */
+      .search-fallback {
+        margin-top: 32px;
+        background: white;
+        border: 1px solid var(--warm-line);
+        border-radius: 14px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .search-fallback input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-family: inherit;
+        font-size: 14px;
+        color: var(--ink-900);
+        background: transparent;
+      }
+
+      .search-fallback input::placeholder {
+        color: var(--ink-300);
+      }
+
+      /* footnote on location */
+      .privacy-note {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 11px;
+        color: var(--ink-500);
+        line-height: 1.5;
+        padding: 0 18px;
+      }
+
+      @media (max-width: 1180px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 800px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .header p {
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="header">
+        <div class="header-left">
+          <h1>Sigurado<span>.</span></h1>
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- ==================== 0. LANGUAGE ==================== -->
+        <div class="phone">
+          <div class="status-bar">
+            <span>9:41</span>
+            <span class="icons">
+              <svg
+                width="16"
+                height="10"
+                viewBox="0 0 16 10"
+                fill="currentColor"
+              >
+                <rect x="0" y="6" width="3" height="4" rx="0.5" />
+                <rect x="4" y="4" width="3" height="6" rx="0.5" />
+                <rect x="8" y="2" width="3" height="8" rx="0.5" />
+                <rect x="12" y="0" width="3" height="10" rx="0.5" />
+              </svg>
+              <svg
+                width="16"
+                height="11"
+                viewBox="0 0 16 11"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <path d="M1 4.5C3 2.5 5.5 1.5 8 1.5C10.5 1.5 13 2.5 15 4.5" />
+                <path
+                  d="M3.5 6.5C5 5.2 6.5 4.5 8 4.5C9.5 4.5 11 5.2 12.5 6.5"
+                />
+                <circle cx="8" cy="9" r="1.2" fill="currentColor" />
+              </svg>
+              <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="20"
+                  height="10"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-opacity="0.4"
+                />
+                <rect
+                  x="2"
+                  y="2"
+                  width="15"
+                  height="7"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="21.5"
+                  y="3.5"
+                  width="1.5"
+                  height="4"
+                  rx="0.5"
+                  fill="currentColor"
+                  fill-opacity="0.4"
+                />
+              </svg>
+            </span>
+          </div>
+
+          <div class="screen s-language">
+            <div class="wordmark">Sigurado</div>
+
+            <h2>
+              Choose your language
+              <!-- <span class="alt">Pumili ng wika</span> -->
+            </h2>
+
+            <div class="lang-options">
+              <button class="lang-option" data-lang="en">
+                <span class="flag" aria-label="UK flag">
+                  <svg
+                    viewBox="0 0 60 30"
+                    xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="none"
+                  >
+                    <rect width="60" height="30" fill="#012169" />
+                    <path
+                      d="M0,0 L60,30 M60,0 L0,30"
+                      stroke="#ffffff"
+                      stroke-width="6"
+                    />
+                    <path d="M0,0 L60,30" stroke="#C8102E" stroke-width="2.5" />
+                    <path d="M60,0 L0,30" stroke="#C8102E" stroke-width="2.5" />
+                    <path
+                      d="M30,0 V30 M0,15 H60"
+                      stroke="#ffffff"
+                      stroke-width="10"
+                    />
+                    <path
+                      d="M30,0 V30 M0,15 H60"
+                      stroke="#C8102E"
+                      stroke-width="6"
+                    />
+                  </svg>
+                </span>
+                <span class="lang-text">
+                  <b>English</b>
+                  <span>Continue in English</span>
+                </span>
+                <svg
+                  class="arrow-ico"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14M13 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              <button class="lang-option" data-lang="tl">
+                <span class="flag" aria-label="Philippine flag">
+                  <svg
+                    viewBox="0 0 60 30"
+                    xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="none"
+                  >
+                    <rect width="60" height="15" fill="#0038A8" />
+                    <rect y="15" width="60" height="15" fill="#CE1126" />
+                    <polygon points="0,0 26,15 0,30" fill="#ffffff" />
+                    <circle cx="9" cy="15" r="3.2" fill="#FCD116" />
+                    <circle cx="2.5" cy="2.5" r="1" fill="#FCD116" />
+                    <circle cx="2.5" cy="27.5" r="1" fill="#FCD116" />
+                    <circle cx="22" cy="15" r="1" fill="#FCD116" />
+                  </svg>
+                </span>
+                <span class="lang-text">
+                  <b>Filipino</b>
+                  <span>Magpatuloy sa Filipino</span>
+                </span>
+                <svg
+                  class="arrow-ico"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14M13 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            <p class="lang-foot">
+              You can change this later in Settings.<br />
+            </p>
+            <!-- <div class="screen-label">01 · Language</div> -->
+          </div>
+        </div>
+
+        <!-- ==================== 1. LOCATION ==================== -->
+        <div class="phone">
+          <div class="status-bar">
+            <span>9:41</span>
+            <span class="icons">
+              <svg
+                width="16"
+                height="10"
+                viewBox="0 0 16 10"
+                fill="currentColor"
+              >
+                <rect x="0" y="6" width="3" height="4" rx="0.5" />
+                <rect x="4" y="4" width="3" height="6" rx="0.5" />
+                <rect x="8" y="2" width="3" height="8" rx="0.5" />
+                <rect x="12" y="0" width="3" height="10" rx="0.5" />
+              </svg>
+              <svg
+                width="16"
+                height="11"
+                viewBox="0 0 16 11"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <path d="M1 4.5C3 2.5 5.5 1.5 8 1.5C10.5 1.5 13 2.5 15 4.5" />
+                <path
+                  d="M3.5 6.5C5 5.2 6.5 4.5 8 4.5C9.5 4.5 11 5.2 12.5 6.5"
+                />
+                <circle cx="8" cy="9" r="1.2" fill="currentColor" />
+              </svg>
+              <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="20"
+                  height="10"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-opacity="0.4"
+                />
+                <rect
+                  x="2"
+                  y="2"
+                  width="15"
+                  height="7"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="21.5"
+                  y="3.5"
+                  width="1.5"
+                  height="4"
+                  rx="0.5"
+                  fill="currentColor"
+                  fill-opacity="0.4"
+                />
+              </svg>
+            </span>
+          </div>
+
+          <div class="screen s-location">
+            <div class="wordmark">Sigurado</div>
+
+            <div class="compass">
+              <div class="ring"></div>
+              <div class="ring r2"></div>
+              <div class="ring r3"></div>
+              <div class="pulse"></div>
+              <div class="pin">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M12 2C7.86 2 4.5 5.36 4.5 9.5c0 5.25 6.5 11.5 7.04 12.01a.66.66 0 0 0 .92 0C12.99 21 19.5 14.75 19.5 9.5 19.5 5.36 16.14 2 12 2z"
+                  />
+                  <circle cx="12" cy="9.5" r="2.8" fill="#0F4C5C" />
+                </svg>
+              </div>
+            </div>
+
+            <h2>
+              <span class="en">Where are you<br />headed?</span>
+              <span class="tl">Saan ka<br />magtatanong?</span>
+            </h2>
+            <p class="lede">
+              <span class="en"
+                >To give you the right checklist, we need to know your
+                barangay.</span
+              >
+              <span class="tl"
+                >Para bigyan ka ng tamang listahan, kailangan namin malaman ang
+                barangay mo.</span
+              >
+            </p>
+
+            <div class="search-fallback">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#A8B2B8"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              <input
+                type="text"
+                class="search-en"
+                placeholder="Search for your barangay…"
+              />
+              <input
+                type="text"
+                class="search-tl"
+                placeholder="Hanapin ang barangay…"
+                style="display: none"
+              />
+            </div>
+
+            <div class="actions">
+              <button class="btn-primary">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="7" />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="2"
+                    fill="currentColor"
+                    stroke="none"
+                  />
+                  <line x1="12" y1="2" x2="12" y2="5" />
+                  <line x1="12" y1="19" x2="12" y2="22" />
+                  <line x1="2" y1="12" x2="5" y2="12" />
+                  <line x1="19" y1="12" x2="22" y2="12" />
+                </svg>
+                <span class="en">Use my location</span>
+                <span class="tl">Gamitin ang location ko</span>
+              </button>
+              <p class="privacy-note">
+                <span class="en"
+                  >Only used to find your barangay.<br />Your location is never
+                  shared.</span
+                >
+                <span class="tl"
+                  >Ginagamit lang para hanapin ang barangay mo.<br />Hindi ito
+                  ibibigay sa kahit sino.</span
+                >
+              </p>
+            </div>
+            <!-- <div class="screen-label">02 · Location</div> -->
+          </div>
+        </div>
+
+        <!-- ==================== 2. CONVO Q1 ==================== -->
+        <div class="phone">
+          <div class="status-bar">
+            <span>9:41</span>
+            <span class="icons">
+              <svg
+                width="16"
+                height="10"
+                viewBox="0 0 16 10"
+                fill="currentColor"
+              >
+                <rect x="0" y="6" width="3" height="4" rx="0.5" />
+                <rect x="4" y="4" width="3" height="6" rx="0.5" />
+                <rect x="8" y="2" width="3" height="8" rx="0.5" />
+                <rect x="12" y="0" width="3" height="10" rx="0.5" />
+              </svg>
+              <svg
+                width="16"
+                height="11"
+                viewBox="0 0 16 11"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <path d="M1 4.5C3 2.5 5.5 1.5 8 1.5C10.5 1.5 13 2.5 15 4.5" />
+                <path
+                  d="M3.5 6.5C5 5.2 6.5 4.5 8 4.5C9.5 4.5 11 5.2 12.5 6.5"
+                />
+                <circle cx="8" cy="9" r="1.2" fill="currentColor" />
+              </svg>
+              <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="20"
+                  height="10"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-opacity="0.4"
+                />
+                <rect
+                  x="2"
+                  y="2"
+                  width="15"
+                  height="7"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="21.5"
+                  y="3.5"
+                  width="1.5"
+                  height="4"
+                  rx="0.5"
+                  fill="currentColor"
+                  fill-opacity="0.4"
+                />
+              </svg>
+            </span>
+          </div>
+
+          <div class="screen s-convo">
+            <div class="topbar">
+              <div class="back">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </div>
+              <div class="step"><b>Brgy. San Roque</b></div>
+              <div style="width: 36px"></div>
+            </div>
+            <div class="progress" style="margin: 14px 24px 0; width: auto">
+              <span style="width: 33%"></span>
+            </div>
+
+            <div class="convo-body">
+              <p class="q-hint">
+                <span class="en"
+                  >Three quick questions. This won't take long.</span
+                >
+                <span class="tl"
+                  >Tatlong tanong lang. Hindi ka magtatagal.</span
+                >
+              </p>
+              <h2 class="current-q">
+                <span class="en">What do you need<br />from the barangay?</span>
+                <span class="tl">Anong kailangan<br />mo sa barangay?</span>
+              </h2>
+              <p class="q-hint">
+                <span class="en">Pick one. You can change it later.</span>
+                <span class="tl"
+                  >Pumili ng isa. Pwede mong palitan mamaya.</span
+                >
+              </p>
+
+              <div class="options">
+                <div class="option selected">
+                  <div class="label-col">
+                    <span>Barangay Clearance</span>
+                    <!-- <span class="meta">
+                      <!-- <span class="en">Most commonly requested</span> -->
+                    <!-- <span class="tl">Pinakamadalas hingiin</span> -->
+                    <!-- </span> -->
+                  </div>
+                  <span class="arrow">→</span>
+                </div>
+                <div class="option">
+                  <div class="label-col">
+                    <span>Certificate of Indigency</span>
+                    <!-- <span class="meta"> -->
+                    <!-- <span class="en">For aid or medical assistance</span> -->
+                    <!-- <span class="tl">Para sa ayuda o medical</span> -->
+                    <!-- </span> -->
+                  </div>
+                  <span class="arrow">→</span>
+                </div>
+                <div class="option">
+                  <div class="label-col">
+                    <span>Certificate of Residency</span>
+                    <!-- <span class="meta"> -->
+                    <!-- <span class="en">Proof that you live here</span> -->
+                    <!-- <span class="tl">Patunay na taga-rito ka</span> -->
+                    <!-- </span> -->
+                  </div>
+                  <span class="arrow">→</span>
+                </div>
+                <div class="option">
+                  <div class="label-col">
+                    <span>Business Permit</span>
+                    <!-- <span class="meta"> -->
+                    <!-- <span class="en">LGU endorsement</span>
+                      <span class="tl">Endorsement para sa LGU</span> -->
+                    <!-- </span> -->
+                  </div>
+                  <span class="arrow">→</span>
+                </div>
+                <div class="option">
+                  <div class="label-col">
+                    <span>
+                      <span class="en">Something else</span>
+                      <span class="tl">Iba pa</span>
+                    </span>
+                    <span class="meta">
+                      <span class="en">Tell us and we'll find it</span>
+                      <span class="tl">Sabihin mo, hahanapin namin</span>
+                    </span>
+                  </div>
+                  <span class="arrow">→</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="convo-footer">
+              <span class="skip">
+                <span class="en">Question 1 of 3</span>
+                <span class="tl">Tanong 1 ng 3</span>
+              </span>
+              <button class="fab-next">
+                <span class="en">Next</span>
+                <span class="tl">Sunod</span>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14M13 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+            <!-- <div class="screen-label">03 · Convo · 1/3</div> -->
+          </div>
+        </div>
+
+        <!-- ==================== 3. CONVO Q2 ==================== -->
+        <div class="phone">
+          <div class="status-bar">
+            <span>9:42</span>
+            <span class="icons">
+              <svg
+                width="16"
+                height="10"
+                viewBox="0 0 16 10"
+                fill="currentColor"
+              >
+                <rect x="0" y="6" width="3" height="4" rx="0.5" />
+                <rect x="4" y="4" width="3" height="6" rx="0.5" />
+                <rect x="8" y="2" width="3" height="8" rx="0.5" />
+                <rect x="12" y="0" width="3" height="10" rx="0.5" />
+              </svg>
+              <svg
+                width="16"
+                height="11"
+                viewBox="0 0 16 11"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <path d="M1 4.5C3 2.5 5.5 1.5 8 1.5C10.5 1.5 13 2.5 15 4.5" />
+                <path
+                  d="M3.5 6.5C5 5.2 6.5 4.5 8 4.5C9.5 4.5 11 5.2 12.5 6.5"
+                />
+                <circle cx="8" cy="9" r="1.2" fill="currentColor" />
+              </svg>
+              <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="20"
+                  height="10"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-opacity="0.4"
+                />
+                <rect
+                  x="2"
+                  y="2"
+                  width="15"
+                  height="7"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="21.5"
+                  y="3.5"
+                  width="1.5"
+                  height="4"
+                  rx="0.5"
+                  fill="currentColor"
+                  fill-opacity="0.4"
+                />
+              </svg>
+            </span>
+          </div>
+
+          <div class="screen s-convo">
+            <div class="topbar">
+              <div class="back">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </div>
+              <div class="step"><b>Brgy. San Roque</b></div>
+              <div style="width: 36px"></div>
+            </div>
+            <div class="progress" style="margin: 14px 24px 0; width: auto">
+              <span style="width: 66%"></span>
+            </div>
+
+            <div class="convo-body">
+              <div class="answered">
+                <div class="qa-receded">
+                  <div class="q">
+                    <span class="en">Need</span>
+                    <span class="tl">Kailangan</span>
+                  </div>
+                  <div class="a">Barangay Clearance</div>
+                </div>
+              </div>
+
+              <h2 class="current-q">
+                <span class="en">What's it for?</span>
+                <span class="tl">Para saan<br />mo gagamitin?</span>
+              </h2>
+              <p class="q-hint">
+                <span class="en"
+                  >Requirements change depending on the purpose.</span
+                >
+                <span class="tl"
+                  >Mag-iiba ang requirement depende sa pakay.</span
+                >
+              </p>
+
+              <div class="options">
+                <div class="option">
+                  <div class="label-col">
+                    <span>
+                      <span class="en">Employment</span>
+                      <span class="tl">Trabaho</span>
+                    </span>
+                    <!-- <span class="meta">
+                      <span class="en">Pre-employment</span>
+                      <span class="tl">Bago mag-trabaho</span>
+                    </span> -->
+                  </div>
+                  <span class="arrow">→</span>
+                </div>
+                <div class="option selected">
+                  <div class="label-col">
+                    <span>
+                      <span class="en">School</span>
+                      <span class="tl">Eskwela</span>
+                    </span>
+                    <!-- <span class="meta">
+                      <span class="en">Enrollment, scholarship</span>
+                      <span class="tl">Enrollment, scholarship</span>
+                    </span> -->
+                  </div>
+                  <span class="arrow">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                </div>
+                <div class="option">
+                  <div class="label-col">
+                    <span>
+                      <span class="en">Bank or loan</span>
+                      <span class="tl">Bangko o pautang</span>
+                    </span>
+                    <!-- <span class="meta">
+                      <span class="en">Loan, account opening</span>
+                      <span class="tl">Pautang, pagbukas ng account</span>
+                    </span> -->
+                  </div>
+                  <span class="arrow">→</span>
+                </div>
+                <div class="option">
+                  <div class="label-col">
+                    <span>Police clearance</span>
+                    <!-- <span class="meta">
+                      <span class="en">As a prerequisite</span>
+                      <span class="tl">Bilang prerequisite</span>
+                    </span> -->
+                  </div>
+                  <span class="arrow">→</span>
+                </div>
+                <div class="option">
+                  <div class="label-col">
+                    <span>
+                      <span class="en">Something else</span>
+                      <span class="tl">Iba pa</span>
+                    </span>
+                    <span class="meta">
+                      <span class="en">Tell us about it</span>
+                      <span class="tl">Sabihin mo sa amin</span>
+                    </span>
+                  </div>
+                  <span class="arrow">→</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="convo-footer">
+              <span class="skip">
+                <span class="en">Question 2 of 3</span>
+                <span class="tl">Tanong 2 ng 3</span>
+              </span>
+              <button class="fab-next">
+                <span class="en">Next</span>
+                <span class="tl">Sunod</span>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14M13 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+            <!-- <div class="screen-label">04 · Convo · 2/3</div> -->
+          </div>
+        </div>
+
+        <!-- ==================== 4. CONVO Q3 ==================== -->
+        <div class="phone">
+          <div class="status-bar">
+            <span>9:42</span>
+            <span class="icons">
+              <svg
+                width="16"
+                height="10"
+                viewBox="0 0 16 10"
+                fill="currentColor"
+              >
+                <rect x="0" y="6" width="3" height="4" rx="0.5" />
+                <rect x="4" y="4" width="3" height="6" rx="0.5" />
+                <rect x="8" y="2" width="3" height="8" rx="0.5" />
+                <rect x="12" y="0" width="3" height="10" rx="0.5" />
+              </svg>
+              <svg
+                width="16"
+                height="11"
+                viewBox="0 0 16 11"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <path d="M1 4.5C3 2.5 5.5 1.5 8 1.5C10.5 1.5 13 2.5 15 4.5" />
+                <path
+                  d="M3.5 6.5C5 5.2 6.5 4.5 8 4.5C9.5 4.5 11 5.2 12.5 6.5"
+                />
+                <circle cx="8" cy="9" r="1.2" fill="currentColor" />
+              </svg>
+              <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="20"
+                  height="10"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-opacity="0.4"
+                />
+                <rect
+                  x="2"
+                  y="2"
+                  width="15"
+                  height="7"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="21.5"
+                  y="3.5"
+                  width="1.5"
+                  height="4"
+                  rx="0.5"
+                  fill="currentColor"
+                  fill-opacity="0.4"
+                />
+              </svg>
+            </span>
+          </div>
+
+          <div class="screen s-convo">
+            <div class="topbar">
+              <div class="back">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </div>
+              <div class="step"><b>Brgy. San Roque</b></div>
+              <div style="width: 36px"></div>
+            </div>
+            <div class="progress" style="margin: 14px 24px 0; width: auto">
+              <span style="width: 100%"></span>
+            </div>
+
+            <div class="convo-body">
+              <div class="answered">
+                <div class="qa-receded">
+                  <div class="q">
+                    <span class="en">Need</span>
+                    <span class="tl">Kailangan</span>
+                  </div>
+                  <div class="a">Barangay Clearance</div>
+                </div>
+                <div class="qa-receded">
+                  <div class="q">
+                    <span class="en">Purpose</span>
+                    <span class="tl">Para saan</span>
+                  </div>
+                  <div class="a">
+                    <span class="en">School</span>
+                    <span class="tl">Eskwela</span>
+                  </div>
+                </div>
+              </div>
+
+              <h2 class="current-q">
+                <span class="en">First time<br />going here?</span>
+                <span class="tl">Una mo bang<br />pagpunta dito?</span>
+              </h2>
+              <p class="q-hint">
+                <span class="en"
+                  >So we know what extra documents you'll need for the first
+                  visit.</span
+                >
+                <span class="tl"
+                  >Para malaman kung anong dapat mong dalhin sa unang
+                  beses.</span
+                >
+              </p>
+
+              <div class="options">
+                <div class="option selected">
+                  <div class="label-col">
+                    <span>
+                      <span class="en">Yes, first time</span>
+                      <span class="tl">Oo, una ko pa lang</span>
+                    </span>
+                    <span class="meta">
+                      <span class="en"
+                        >We'll add valid ID and proof of residence</span
+                      >
+                      <span class="tl"
+                        >Idadagdag namin ang valid ID at proof of
+                        residence</span
+                      >
+                    </span>
+                  </div>
+                  <span class="arrow">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                </div>
+                <div class="option">
+                  <div class="label-col">
+                    <span>
+                      <span class="en">No, I've been before</span>
+                      <span class="tl">Hindi, balik-balik na ako</span>
+                    </span>
+                    <span class="meta">
+                      <span class="en">Shorter checklist</span>
+                      <span class="tl">Mas maikling listahan</span>
+                    </span>
+                  </div>
+                  <span class="arrow">→</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="convo-footer">
+              <span class="skip">
+                <span class="en">Question 3 of 3</span>
+                <span class="tl">Tanong 3 ng 3</span>
+              </span>
+              <button class="fab-next">
+                <span class="en">See checklist</span>
+                <span class="tl">Tignan listahan</span>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14M13 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+            <!-- <div class="screen-label">05 · Convo · 3/3</div> -->
+          </div>
+        </div>
+
+        <!-- ==================== 5. CHECKLIST ==================== -->
+        <div class="phone">
+          <div
+            class="status-bar"
+            style="color: white; background: var(--teal-800)"
+          >
+            <span>9:43</span>
+            <span class="icons">
+              <svg
+                width="16"
+                height="10"
+                viewBox="0 0 16 10"
+                fill="currentColor"
+              >
+                <rect x="0" y="6" width="3" height="4" rx="0.5" />
+                <rect x="4" y="4" width="3" height="6" rx="0.5" />
+                <rect x="8" y="2" width="3" height="8" rx="0.5" />
+                <rect x="12" y="0" width="3" height="10" rx="0.5" />
+              </svg>
+              <svg
+                width="16"
+                height="11"
+                viewBox="0 0 16 11"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <path d="M1 4.5C3 2.5 5.5 1.5 8 1.5C10.5 1.5 13 2.5 15 4.5" />
+                <path
+                  d="M3.5 6.5C5 5.2 6.5 4.5 8 4.5C9.5 4.5 11 5.2 12.5 6.5"
+                />
+                <circle cx="8" cy="9" r="1.2" fill="currentColor" />
+              </svg>
+              <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="20"
+                  height="10"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-opacity="0.4"
+                />
+                <rect
+                  x="2"
+                  y="2"
+                  width="15"
+                  height="7"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="21.5"
+                  y="3.5"
+                  width="1.5"
+                  height="4"
+                  rx="0.5"
+                  fill="currentColor"
+                  fill-opacity="0.4"
+                />
+              </svg>
+            </span>
+          </div>
+
+          <div class="screen s-checklist">
+            <div class="checklist-hero">
+              <div class="topbar">
+                <div class="back">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                </div>
+                <div class="step">
+                  <span class="en">Your checklist</span>
+                  <span class="tl">Iyong listahan</span>
+                </div>
+                <div class="back" style="background: rgba(255, 255, 255, 0.12)">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <circle cx="18" cy="5" r="3" />
+                    <circle cx="6" cy="12" r="3" />
+                    <circle cx="18" cy="19" r="3" />
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="badge-row">
+                <span class="verified-badge">
+                  <svg
+                    width="9"
+                    height="9"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span class="en">Official</span>
+                  <span class="tl">Opisyal</span>
+                </span>
+                <span>Brgy. San Roque · Pasig</span>
+              </div>
+
+              <h2>
+                <span class="en">For Barangay Clearance</span>
+                <span class="tl">Para sa Barangay Clearance</span>
+                <small>
+                  <span class="en">School · first time here</span>
+                  <span class="tl">Eskwela · unang beses dito</span>
+                </small>
+              </h2>
+
+              <div class="signatory-card">
+                <div class="avatar">KP</div>
+                <div class="who">
+                  <b>Kapitan Reyes</b>
+                  <span>
+                    <span class="en">At the hall now · until 5pm</span>
+                    <span class="tl">Ngayon nasa hall · hanggang 5pm</span>
+                  </span>
+                </div>
+                <span class="status-pill">Available</span>
+              </div>
+            </div>
+
+            <div class="checklist-body">
+              <div class="section-label">
+                <span>
+                  <span class="en">Bring with you</span>
+                  <span class="tl">Dadalhin mo</span>
+                </span>
+                <span class="count">5 items</span>
+              </div>
+
+              <div class="doc-list">
+                <div class="doc-item">
+                  <div class="check done">
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </div>
+                  <div class="doc-info">
+                    <b>1 valid government ID</b>
+                    <span>
+                      <span class="en"
+                        >Driver's license, PhilSys, Postal, or UMID</span
+                      >
+                      <span class="tl"
+                        >Driver's license, PhilSys, Postal, o UMID</span
+                      >
+                    </span>
+                    <span class="tag">
+                      <span class="en">Required</span>
+                      <span class="tl">Kailangan</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="doc-item">
+                  <div class="check done">
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </div>
+                  <div class="doc-info">
+                    <b>Proof of residence</b>
+                    <span>
+                      <span class="en"
+                        >Meralco or water bill, even under a housemate's
+                        name</span
+                      >
+                      <span class="tl"
+                        >Meralco bill o tubig bill, kahit pangalan ng kasama sa
+                        bahay</span
+                      >
+                    </span>
+                    <span class="tag">
+                      <span class="en">Required · 1st time</span>
+                      <span class="tl">Kailangan · 1st time</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="doc-item">
+                  <div class="check"></div>
+                  <div class="doc-info">
+                    <b>Cedula (Community Tax Cert.)</b>
+                    <span>
+                      <span class="en"
+                        >Can also be obtained there, ₱30 extra</span
+                      >
+                      <span class="tl"
+                        >Pwede ring kunin doon mismo, ₱30 dagdag</span
+                      >
+                    </span>
+                    <span class="tag">
+                      <span class="en">Required</span>
+                      <span class="tl">Kailangan</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="doc-item">
+                  <div class="check"></div>
+                  <div class="doc-info">
+                    <b>
+                      <span class="en">1 piece 1×1 ID photo</span>
+                      <span class="tl">1 piraso na 1×1 ID picture</span>
+                    </b>
+                    <span>
+                      <span class="en">White background, recent</span>
+                      <span class="tl">White background, recent</span>
+                    </span>
+                    <span class="tag">
+                      <span class="en">Required</span>
+                      <span class="tl">Kailangan</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="doc-item">
+                  <div class="check"></div>
+                  <div class="doc-info">
+                    <b>
+                      <span class="en">Letter from your school</span>
+                      <span class="tl">Sulat galing sa eskwelahan</span>
+                    </b>
+                    <span>
+                      <span class="en">If your school has a request form</span>
+                      <span class="tl"
+                        >Kung may request form ang school mo</span
+                      >
+                    </span>
+                    <span class="tag optional">
+                      <span class="en">If available</span>
+                      <!-- <span class="tl">Kung meron</span> -->
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fee-card">
+                <div>
+                  <div class="label">
+                    <span class="en">Total fee</span>
+                    <span class="tl">Kabuuang bayad</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 11px;
+                      color: var(--ink-300);
+                      margin-top: 2px;
+                    "
+                  >
+                    <span class="en">Cash only at the hall</span>
+                    <span class="tl">Cash lang sa hall</span>
+                  </div>
+                </div>
+                <div class="amount">₱50<small>.00</small></div>
+              </div>
+
+              <div class="updated-row">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#0F4C5C"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                <span>
+                  <span class="en"
+                    >Updated <b>yesterday, 4:12pm</b> by the barangay captain.
+                    Confirmed accurate.</span
+                  >
+                  <span class="tl"
+                    >Inupdate <b>kahapon, 4:12pm</b> ng punong barangay.
+                    Kumpirmadong tama.</span
+                  >
+                </span>
+              </div>
+
+              <button class="ready-cta">
+                <span class="en">I'm ready</span>
+                <span class="tl">Handa na ako</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14M13 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== 6. CONFIRMATION ==================== -->
+        <div class="phone">
+          <div
+            class="status-bar"
+            style="color: white; background: var(--teal-800)"
+          >
+            <span>9:44</span>
+            <span class="icons">
+              <svg
+                width="16"
+                height="10"
+                viewBox="0 0 16 10"
+                fill="currentColor"
+              >
+                <rect x="0" y="6" width="3" height="4" rx="0.5" />
+                <rect x="4" y="4" width="3" height="6" rx="0.5" />
+                <rect x="8" y="2" width="3" height="8" rx="0.5" />
+                <rect x="12" y="0" width="3" height="10" rx="0.5" />
+              </svg>
+              <svg
+                width="16"
+                height="11"
+                viewBox="0 0 16 11"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <path d="M1 4.5C3 2.5 5.5 1.5 8 1.5C10.5 1.5 13 2.5 15 4.5" />
+                <path
+                  d="M3.5 6.5C5 5.2 6.5 4.5 8 4.5C9.5 4.5 11 5.2 12.5 6.5"
+                />
+                <circle cx="8" cy="9" r="1.2" fill="currentColor" />
+              </svg>
+              <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="20"
+                  height="10"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-opacity="0.4"
+                />
+                <rect
+                  x="2"
+                  y="2"
+                  width="15"
+                  height="7"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="21.5"
+                  y="3.5"
+                  width="1.5"
+                  height="4"
+                  rx="0.5"
+                  fill="currentColor"
+                  fill-opacity="0.4"
+                />
+              </svg>
+            </span>
+          </div>
+
+          <div class="screen s-confirm">
+            <div class="topbar">
+              <div class="back">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </div>
+              <div class="step">
+                <span class="en">All done</span>
+                <span class="tl">Tapos na</span>
+              </div>
+              <div style="width: 36px"></div>
+            </div>
+
+            <div class="confirm-mark">
+              <svg
+                width="42"
+                height="42"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+
+            <h2 class="confirm-headline">
+              <span class="en">You're all set.</span>
+              <span class="tl">Sigurado<br />ka na.</span>
+            </h2>
+            <p class="confirm-sub">
+              <span class="en"
+                >Just bring what's on the list. ₱50 cash. Kapitan Reyes is there
+                until 5pm.</span
+              >
+              <span class="tl"
+                >Dalhin mo lang ang nasa listahan. ₱50 cash. Si Kapitan Reyes
+                nandun pa hanggang 5pm.</span
+              >
+            </p>
+
+            <div class="summary-card">
+              <div class="summary-row">
+                <span class="key">
+                  <span class="en">For</span>
+                  <span class="tl">Para</span>
+                </span>
+                <span class="val">Barangay Clearance</span>
+              </div>
+              <div class="summary-row">
+                <span class="key">
+                  <span class="en">Where</span>
+                  <span class="tl">Saan</span>
+                </span>
+                <span class="val">Brgy. San Roque</span>
+              </div>
+              <div class="summary-row">
+                <span class="key">
+                  <span class="en">Fee</span>
+                  <span class="tl">Bayad</span>
+                </span>
+                <span class="val">₱50.00</span>
+              </div>
+              <div class="summary-row">
+                <span class="key">
+                  <span class="en">Signatory</span>
+                  <span class="tl">Pipirma</span>
+                </span>
+                <span class="val">Kapitan Reyes · Available</span>
+              </div>
+            </div>
+
+            <div class="confirm-footer">
+              <button class="btn-light">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-4"
+                  />
+                  <polyline points="12 2 12 15" />
+                  <polyline points="7 7 12 2 17 7" />
+                </svg>
+                <span class="en">Save to phone</span>
+                <span class="tl">Save sa phone</span>
+              </button>
+              <button class="btn-ghost-dark">
+                <span class="en">Show when I'm at the hall</span>
+                <span class="tl">Ipakita kapag nasa hall ako</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function setLang(lang) {
+        document.body.classList.toggle("lang-tl", lang === "tl");
+        var enInputs = document.querySelectorAll(".search-en");
+        var tlInputs = document.querySelectorAll(".search-tl");
+        enInputs.forEach(function (el) {
+          el.style.display = lang === "tl" ? "none" : "block";
+        });
+        tlInputs.forEach(function (el) {
+          el.style.display = lang === "tl" ? "block" : "none";
+        });
+      }
+
+      var CHECK_SVG =
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      var DONE_SVG =
+        '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+      document.querySelectorAll(".options").forEach(function (group) {
+        group.addEventListener("click", function (e) {
+          var opt = e.target.closest(".option");
+          if (!opt || !group.contains(opt)) return;
+          group.querySelectorAll(".option").forEach(function (o) {
+            o.classList.remove("selected");
+            var arr = o.querySelector(".arrow");
+            if (arr) arr.innerHTML = "→";
+          });
+          opt.classList.add("selected");
+          var arr = opt.querySelector(".arrow");
+          if (arr) arr.innerHTML = CHECK_SVG;
+        });
+      });
+
+      document.querySelectorAll(".check").forEach(function (check) {
+        check.addEventListener("click", function () {
+          var nowDone = !check.classList.contains("done");
+          check.classList.toggle("done", nowDone);
+          check.innerHTML = nowDone ? DONE_SVG : "";
+        });
+      });
+
+      var phones = Array.from(document.querySelectorAll(".phone"));
+      function goToPhone(idx) {
+        if (idx < 0 || idx >= phones.length) return;
+        phones[idx].scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
+        });
+      }
+      function phoneIndexOf(el) {
+        return phones.indexOf(el.closest(".phone"));
+      }
+
+      document
+        .querySelectorAll(".fab-next, .ready-cta, .s-location .btn-primary")
+        .forEach(function (btn) {
+          btn.addEventListener("click", function (e) {
+            goToPhone(phoneIndexOf(e.currentTarget) + 1);
+          });
+        });
+
+      document.querySelectorAll(".lang-option").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          setLang(btn.getAttribute("data-lang"));
+          goToPhone(phoneIndexOf(e.currentTarget) + 1);
+        });
+      });
+
+      document.querySelectorAll(".back").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          var idx = phoneIndexOf(e.currentTarget);
+          var phone = phones[idx];
+          if (phone && phone.querySelector(".s-confirm")) {
+            goToPhone(0);
+          } else {
+            goToPhone(idx - 1);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
