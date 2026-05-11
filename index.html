@@ -503,6 +503,141 @@
         padding-bottom: 2px;
       }
 
+      /* === Barangay profile (trust signal) === */
+      .s-barangay {
+        padding: 20px 28px 24px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .s-barangay .brgy-card {
+        margin-top: 56px;
+        background: var(--neutral-card);
+        border: 1px solid var(--warm-line);
+        border-radius: 18px;
+        padding: 20px 20px 18px;
+        box-shadow: var(--shadow-soft);
+        animation: brgyCardIn 300ms ease-out both;
+      }
+
+      @keyframes brgyCardIn {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .s-barangay .brgy-name-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .s-barangay .brgy-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--teal-900);
+        letter-spacing: -0.02em;
+      }
+
+      .s-barangay .verified-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 9px;
+        background: var(--green-50);
+        color: var(--green-600);
+        border-radius: 100px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        animation: brgyPulse 700ms ease-out 200ms both;
+      }
+
+      @keyframes brgyPulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(91, 174, 126, 0.5);
+        }
+        60% {
+          box-shadow: 0 0 0 10px rgba(91, 174, 126, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(91, 174, 126, 0);
+        }
+      }
+
+      .s-barangay .brgy-meta {
+        margin-top: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--ink-500);
+        line-height: 1.45;
+      }
+
+      .s-barangay .brgy-meta b {
+        color: var(--ink-700);
+        font-weight: 600;
+      }
+
+      .s-barangay .brgy-signatory {
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid var(--warm-line);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .s-barangay .brgy-signatory .avatar {
+        background: linear-gradient(135deg, #5bae7e, #3d8b5c);
+      }
+
+      .s-barangay .brgy-signatory .avatar::after {
+        border-color: var(--neutral-card);
+      }
+
+      .s-barangay .brgy-signatory .who {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .s-barangay .brgy-signatory .who b {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink-900);
+        letter-spacing: -0.005em;
+      }
+
+      .s-barangay .brgy-signatory .who span {
+        font-size: 11px;
+        color: var(--green-600);
+        font-weight: 600;
+        margin-top: 2px;
+      }
+
+      .s-barangay .brgy-actions {
+        margin-top: auto;
+        padding-top: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-bottom: 12px;
+      }
+
+      .s-barangay .brgy-actions .btn-primary {
+        width: 100%;
+      }
+
       /* === Conversation screens === */
       .s-convo {
         display: flex;
@@ -1161,6 +1296,161 @@
         cursor: pointer;
       }
 
+      /* === Ask link (entry to chat) === */
+      .ask-link {
+        display: block;
+        margin: 12px 0;
+        text-align: center;
+        font-size: 13px;
+        color: var(--ink-500);
+        text-decoration: none;
+        cursor: pointer;
+        border-bottom: 1px solid transparent;
+        align-self: center;
+        padding-bottom: 1px;
+      }
+      .ask-link:hover {
+        border-bottom-color: var(--ink-300);
+      }
+
+      /* === Chat screen === */
+      .s-chat {
+        height: 100%;
+        background: var(--neutral-bg);
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .chat-topbar {
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+        background: var(--neutral-bg);
+      }
+      .chat-topbar .chat-back {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(15, 76, 92, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--teal-800);
+        cursor: pointer;
+        border: none;
+      }
+      .chat-topbar .chat-title {
+        color: var(--teal-800);
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .chat-topbar .chat-spacer {
+        width: 36px;
+      }
+
+      .chat-subtitle {
+        font-size: 11px;
+        color: var(--ink-500);
+        text-align: center;
+        padding: 6px 24px;
+        border-bottom: 1px solid var(--warm-line);
+        flex-shrink: 0;
+      }
+
+      .chat-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .chat-body::-webkit-scrollbar {
+        display: none;
+      }
+
+      .bubble-user {
+        background: var(--teal-800);
+        color: white;
+        font-size: 14px;
+        line-height: 1.45;
+        border-radius: 18px 18px 4px 18px;
+        padding: 12px 16px;
+        max-width: 80%;
+        align-self: flex-end;
+      }
+
+      .bubble-app {
+        background: white;
+        border: 1px solid var(--warm-line);
+        color: var(--ink-900);
+        font-size: 14px;
+        line-height: 1.5;
+        border-radius: 18px 18px 18px 4px;
+        padding: 12px 16px;
+        max-width: 80%;
+        align-self: flex-start;
+      }
+
+      .bubble-source {
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: var(--ink-500);
+      }
+      .bubble-source .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green-500);
+        flex-shrink: 0;
+      }
+
+      .chat-input {
+        flex-shrink: 0;
+        border-top: 1px solid var(--warm-line);
+        padding: 14px 20px;
+        background: var(--neutral-bg);
+        display: flex;
+        align-items: center;
+      }
+      .chat-input input {
+        flex: 1;
+        border: 1px solid var(--warm-line);
+        border-radius: 24px;
+        padding: 12px 16px;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        background: white;
+        color: var(--ink-900);
+      }
+      .chat-input input::placeholder {
+        color: var(--ink-300);
+      }
+      .chat-input .chat-send {
+        background: var(--teal-800);
+        color: white;
+        border: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        margin-left: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
       /* search input on location */
       .search-fallback {
         margin-top: 32px;
@@ -1548,7 +1838,131 @@
           </div>
         </div>
 
-        <!-- ==================== 2. CONVO Q1 ==================== -->
+        <!-- ==================== 2. BARANGAY PROFILE ==================== -->
+        <div class="phone">
+          <div class="status-bar">
+            <span>9:42</span>
+            <span class="icons">
+              <svg
+                width="16"
+                height="10"
+                viewBox="0 0 16 10"
+                fill="currentColor"
+              >
+                <rect x="0" y="6" width="3" height="4" rx="0.5" />
+                <rect x="4" y="4" width="3" height="6" rx="0.5" />
+                <rect x="8" y="2" width="3" height="8" rx="0.5" />
+                <rect x="12" y="0" width="3" height="10" rx="0.5" />
+              </svg>
+              <svg
+                width="16"
+                height="11"
+                viewBox="0 0 16 11"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <path d="M1 4.5C3 2.5 5.5 1.5 8 1.5C10.5 1.5 13 2.5 15 4.5" />
+                <path
+                  d="M3.5 6.5C5 5.2 6.5 4.5 8 4.5C9.5 4.5 11 5.2 12.5 6.5"
+                />
+                <circle cx="8" cy="9" r="1.2" fill="currentColor" />
+              </svg>
+              <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="20"
+                  height="10"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-opacity="0.4"
+                />
+                <rect
+                  x="2"
+                  y="2"
+                  width="15"
+                  height="7"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="21.5"
+                  y="3.5"
+                  width="1.5"
+                  height="4"
+                  rx="0.5"
+                  fill="currentColor"
+                  fill-opacity="0.4"
+                />
+              </svg>
+            </span>
+          </div>
+
+          <div class="screen s-barangay">
+            <div class="wordmark">Sigurado</div>
+
+            <div class="brgy-card">
+              <div class="brgy-name-row">
+                <span class="brgy-name">Brgy. San Roque · Pasig</span>
+                <span class="verified-pill">
+                  <svg
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Official verified
+                </span>
+              </div>
+
+              <div class="brgy-meta">
+                <div>
+                  <span class="en"
+                    >Requirements last updated <b>yesterday, 4:12pm</b></span
+                  >
+                  <span class="tl"
+                    >Huling update ng requirements <b>kahapon, 4:12pm</b></span
+                  >
+                </div>
+                <div>
+                  <span class="en">Open today · <b>8am – 5pm</b></span>
+                  <span class="tl">Bukas ngayon · <b>8am – 5pm</b></span>
+                </div>
+              </div>
+
+              <div class="brgy-signatory">
+                <div class="avatar">KR</div>
+                <div class="who">
+                  <b>Kapitan Reyes</b>
+                  <span class="en">Available now</span>
+                  <span class="tl">Available na</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="brgy-actions">
+              <button class="btn-primary">
+                <span class="en">Looks good, continue →</span>
+                <span class="tl">Sige, magpatuloy →</span>
+              </button>
+              <p class="privacy-note">
+                <span class="en">Info verified by the barangay captain</span>
+                <span class="tl"
+                  >Beripikado ng kapitan ng barangay ang impormasyon</span
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== 3. CONVO Q1 ==================== -->
         <div class="phone">
           <div class="status-bar">
             <span>9:41</span>
@@ -2465,6 +2879,11 @@
                 </span>
               </div>
 
+              <a class="ask-link" role="button" tabindex="0">
+                <span class="en">Not sure about something? Ask →</span>
+                <span class="tl">May tanong ka? Magtanong →</span>
+              </a>
+
               <button class="ready-cta">
                 <span class="en">I'm ready</span>
                 <span class="tl">Handa na ako</span>
@@ -2662,6 +3081,175 @@
             </div>
           </div>
         </div>
+
+        <!-- ==================== 7. CHAT ==================== -->
+        <div class="phone">
+          <div
+            class="status-bar"
+            style="color: white; background: var(--teal-800)"
+          >
+            <span>9:45</span>
+            <span class="icons">
+              <svg
+                width="16"
+                height="10"
+                viewBox="0 0 16 10"
+                fill="currentColor"
+              >
+                <rect x="0" y="6" width="3" height="4" rx="0.5" />
+                <rect x="4" y="4" width="3" height="6" rx="0.5" />
+                <rect x="8" y="2" width="3" height="8" rx="0.5" />
+                <rect x="12" y="0" width="3" height="10" rx="0.5" />
+              </svg>
+              <svg
+                width="16"
+                height="11"
+                viewBox="0 0 16 11"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.2"
+              >
+                <path d="M1 4.5C3 2.5 5.5 1.5 8 1.5C10.5 1.5 13 2.5 15 4.5" />
+                <path
+                  d="M3.5 6.5C5 5.2 6.5 4.5 8 4.5C9.5 4.5 11 5.2 12.5 6.5"
+                />
+                <circle cx="8" cy="9" r="1.2" fill="currentColor" />
+              </svg>
+              <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="20"
+                  height="10"
+                  rx="2.5"
+                  stroke="currentColor"
+                  stroke-opacity="0.4"
+                />
+                <rect
+                  x="2"
+                  y="2"
+                  width="15"
+                  height="7"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="21.5"
+                  y="3.5"
+                  width="1.5"
+                  height="4"
+                  rx="0.5"
+                  fill="currentColor"
+                  fill-opacity="0.4"
+                />
+              </svg>
+            </span>
+          </div>
+
+          <div class="screen s-chat">
+            <div class="chat-topbar">
+              <button class="chat-back" aria-label="Back">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <div class="chat-title">
+                <span class="en">Ask anything</span>
+                <span class="tl">Magtanong</span>
+              </div>
+              <div class="chat-spacer"></div>
+            </div>
+
+            <div class="chat-subtitle">
+              <!-- <span class="en">Answers are specific to Brgy. San Roque</span> -->
+              <!-- <span class="tl">Mga sagot ay para sa Brgy. San Roque</span> -->
+            </div>
+
+            <div class="chat-body">
+              <div class="bubble-user">
+                <span class="en"
+                  >My proof of residence is under my landlord's name. Will that
+                  work?</span
+                >
+                <span class="tl"
+                  >Ang proof of residence ko ay nasa pangalan ng landlord ko.
+                  Pwede ba 'yon?</span
+                >
+              </div>
+
+              <div class="bubble-app">
+                <span class="en"
+                  >Yes, that's fine. Brgy. San Roque accepts Meralco or water
+                  bills even if they're under a landlord or housemate's name —
+                  as long as the address matches. Just bring it alongside your
+                  valid ID.</span
+                >
+                <span class="tl"
+                  >Oo, okay lang. Tinatanggap ng Brgy. San Roque ang Meralco o
+                  water bills kahit nasa pangalan ng landlord o kasama — basta
+                  tugma ang address. Dalhin mo lang kasama ng valid ID mo.</span
+                >
+                <div class="bubble-source">
+                  <span class="dot"></span>
+                  <span>Specific to Brgy. San Roque · San Roque</span>
+                </div>
+              </div>
+
+              <div class="bubble-user">
+                <span class="en">What if I don't have a Cedula yet?</span>
+                <span class="tl">Paano kung wala pa akong Cedula?</span>
+              </div>
+
+              <div class="bubble-app">
+                <span class="en"
+                  >You can get one at the barangay hall itself on the same
+                  visit. It costs ₱30 extra — so bring at least ₱80 total. No
+                  need to get it beforehand.</span
+                >
+                <span class="tl"
+                  >Pwede kang kumuha doon mismo sa barangay hall sa parehong
+                  punta. ₱30 dagdag — kaya magdala ng kahit ₱80 lahat. 'Di mo na
+                  kailangang kunin nang maaga.</span
+                >
+                <div class="bubble-source">
+                  <span class="dot"></span>
+                  <span>Specific to Brgy. San Roque · San Roque</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-input">
+              <input
+                type="text"
+                placeholder="Ask a follow-up…"
+                aria-label="Ask a follow-up"
+              />
+              <button class="chat-send" aria-label="Send">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14M13 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2720,7 +3308,9 @@
       }
 
       document
-        .querySelectorAll(".fab-next, .ready-cta, .s-location .btn-primary")
+        .querySelectorAll(
+          ".fab-next, .ready-cta, .s-location .btn-primary, .s-barangay .btn-primary",
+        )
         .forEach(function (btn) {
           btn.addEventListener("click", function (e) {
             goToPhone(phoneIndexOf(e.currentTarget) + 1);
@@ -2731,6 +3321,20 @@
         btn.addEventListener("click", function (e) {
           setLang(btn.getAttribute("data-lang"));
           goToPhone(phoneIndexOf(e.currentTarget) + 1);
+        });
+      });
+
+      document.querySelectorAll(".ask-link").forEach(function (link) {
+        link.addEventListener("click", function (e) {
+          var idx = phoneIndexOf(e.currentTarget);
+          goToPhone(idx + 2);
+        });
+      });
+
+      document.querySelectorAll(".chat-back").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          var idx = phoneIndexOf(e.currentTarget);
+          goToPhone(idx - 2);
         });
       });
 
