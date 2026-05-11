@@ -2153,7 +2153,7 @@
                 >
               </p>
 
-              <div class="options">
+              <div class="options" data-q="document">
                 <div class="option selected">
                   <div class="label-col">
                     <span>Barangay Clearance</span>
@@ -2327,7 +2327,7 @@
                     <span class="en">Need</span>
                     <span class="tl">Kailangan</span>
                   </div>
-                  <div class="a">Barangay Clearance</div>
+                  <div class="a" data-bind="document">Barangay Clearance</div>
                 </div>
               </div>
 
@@ -2344,7 +2344,7 @@
                 >
               </p>
 
-              <div class="options">
+              <div class="options" data-q="purpose">
                 <div class="option">
                   <div class="label-col">
                     <span>
@@ -2540,14 +2540,14 @@
                     <span class="en">Need</span>
                     <span class="tl">Kailangan</span>
                   </div>
-                  <div class="a">Barangay Clearance</div>
+                  <div class="a" data-bind="document">Barangay Clearance</div>
                 </div>
                 <div class="qa-receded">
                   <div class="q">
                     <span class="en">Purpose</span>
                     <span class="tl">Para saan</span>
                   </div>
-                  <div class="a">
+                  <div class="a" data-bind="purpose">
                     <span class="en">School</span>
                     <span class="tl">Eskwela</span>
                   </div>
@@ -2569,7 +2569,7 @@
                 >
               </p>
 
-              <div class="options">
+              <div class="options" data-q="firstTime">
                 <div class="option selected">
                   <div class="label-col">
                     <span>
@@ -2768,7 +2768,7 @@
                 <span>Brgy. San Roque · Pasig</span>
               </div>
 
-              <h2>
+              <h2 data-bind="checklist-heading">
                 <span class="en">For Barangay Clearance</span>
                 <span class="tl">Para sa Barangay Clearance</span>
                 <small>
@@ -2837,10 +2837,10 @@
                   <span class="en">Bring with you</span>
                   <span class="tl">Dadalhin mo</span>
                 </span>
-                <span class="count">5 items</span>
+                <span class="count" data-bind="item-count">5 items</span>
               </div>
 
-              <div class="doc-list">
+              <div class="doc-list" data-bind="doc-list">
                 <div class="doc-item">
                   <div class="check done">
                     <svg
@@ -2978,7 +2978,7 @@
                     <span class="tl">Cash lang sa hall</span>
                   </div>
                 </div>
-                <div class="amount">₱50<small>.00</small></div>
+                <div class="amount" data-bind="fee">₱50<small>.00</small></div>
               </div>
 
               <div class="updated-row">
@@ -3414,12 +3414,12 @@
         });
       });
 
-      document.querySelectorAll(".check").forEach(function (check) {
-        check.addEventListener("click", function () {
-          var nowDone = !check.classList.contains("done");
-          check.classList.toggle("done", nowDone);
-          check.innerHTML = nowDone ? DONE_SVG : "";
-        });
+      document.addEventListener("click", function (e) {
+        var check = e.target.closest(".check");
+        if (!check) return;
+        var nowDone = !check.classList.contains("done");
+        check.classList.toggle("done", nowDone);
+        check.innerHTML = nowDone ? DONE_SVG : "";
       });
 
       var phones = Array.from(document.querySelectorAll(".phone"));
@@ -3477,6 +3477,149 @@
           }
         });
       });
+
+      /* ============ minimal persistence: choices drive the checklist ============ */
+      var KEYS = {
+        document: ["barangay-clearance","cert-indigency","cert-residency","business-permit","other-doc"],
+        purpose:  ["employment","school","bank","police","other-purpose"],
+        firstTime:["yes","no"],
+      };
+
+      var DOC_LABEL = {
+        "barangay-clearance": { en: "Barangay Clearance", tl: "Barangay Clearance" },
+        "cert-indigency":     { en: "Certificate of Indigency", tl: "Certificate of Indigency" },
+        "cert-residency":     { en: "Certificate of Residency", tl: "Certificate of Residency" },
+        "business-permit":    { en: "Business Permit", tl: "Business Permit" },
+        "other-doc":          { en: "Something else", tl: "Iba pa" },
+      };
+      var PURPOSE_LABEL = {
+        "employment":    { en: "Employment", tl: "Trabaho" },
+        "school":        { en: "School", tl: "Eskwela" },
+        "bank":          { en: "Bank or loan", tl: "Bangko o pautang" },
+        "police":        { en: "Police clearance", tl: "Police clearance" },
+        "other-purpose": { en: "Something else", tl: "Iba pa" },
+      };
+      var FIRSTTIME_LABEL = {
+        yes: { en: "first time here", tl: "unang beses dito" },
+        no:  { en: "returning visitor", tl: "balik-balik na" },
+      };
+
+      var ID_ITEM = { id: "id", title: { en: "1 valid government ID", tl: "1 valid government ID" }, sub: { en: "Driver's license, PhilSys, Postal, or UMID", tl: "Driver's license, PhilSys, Postal, o UMID" }, tag: { en: "Required", tl: "Kailangan" } };
+      var CEDULA_ITEM = { id: "cedula", title: { en: "Cedula (Community Tax Cert.)", tl: "Cedula (Community Tax Cert.)" }, sub: { en: "Can also be obtained there, ₱30 extra", tl: "Pwede ring kunin doon mismo, ₱30 dagdag" }, tag: { en: "Required", tl: "Kailangan" } };
+      var PHOTO_ITEM = { id: "photo", title: { en: "1 piece 1×1 ID photo", tl: "1 piraso na 1×1 ID picture" }, sub: { en: "White background, recent", tl: "White background, recent" }, tag: { en: "Required", tl: "Kailangan" } };
+      var RESIDENCE_ITEM = { id: "residence", title: { en: "Proof of residence", tl: "Proof of residence" }, sub: { en: "Meralco or water bill, even under a housemate's name", tl: "Meralco bill o tubig bill, kahit pangalan ng kasama sa bahay" }, tag: { en: "Required · 1st time", tl: "Kailangan · 1st time" } };
+
+      var DOC_DATA = {
+        "barangay-clearance": { fee: 50,  base: [ID_ITEM, CEDULA_ITEM, PHOTO_ITEM] },
+        "cert-indigency":     { fee: 0,   base: [ID_ITEM, PHOTO_ITEM] },
+        "cert-residency":     { fee: 30,  base: [ID_ITEM, CEDULA_ITEM] },
+        "business-permit":    { fee: 200, base: [
+          ID_ITEM,
+          CEDULA_ITEM,
+          { id: "dti", title: { en: "DTI / SEC registration", tl: "DTI / SEC registration" }, sub: { en: "Business name registration", tl: "Pagpaparehistro ng pangalan ng negosyo" }, tag: { en: "Required", tl: "Kailangan" } },
+          { id: "lease", title: { en: "Lease contract or land title", tl: "Lease contract o titulo ng lupa" }, sub: { en: "Proof of business location", tl: "Patunay ng lokasyon ng negosyo" }, tag: { en: "Required", tl: "Kailangan" } },
+        ] },
+        "other-doc":          { fee: 50,  base: [ID_ITEM, PHOTO_ITEM] },
+      };
+
+      var PURPOSE_ITEM = {
+        "employment": { id: "purpose-employment", title: { en: "Employment letter or job offer", tl: "Employment letter o job offer" }, sub: { en: "If your employer provided one", tl: "Kung may binigay ang employer mo" }, tag: { en: "If available", tl: "Kung meron" }, optional: true },
+        "school":     { id: "purpose-school", title: { en: "Letter from your school", tl: "Sulat galing sa eskwelahan" }, sub: { en: "If your school has a request form", tl: "Kung may request form ang school mo" }, tag: { en: "If available", tl: "Kung meron" }, optional: true },
+        "bank":       { id: "purpose-bank", title: { en: "Bank request form", tl: "Bank request form" }, sub: { en: "Some banks require their own form", tl: "May banks na may sariling form" }, tag: { en: "If available", tl: "Kung meron" }, optional: true },
+        "police":     { id: "purpose-police", title: { en: "Police clearance application slip", tl: "Police clearance application slip" }, sub: { en: "From the police station", tl: "Galing sa istasyon ng pulis" }, tag: { en: "If available", tl: "Kung meron" }, optional: true },
+      };
+
+      var state = { document: "barangay-clearance", purpose: "school", firstTime: "yes" };
+
+      // sync state with pre-selected options in markup
+      document.querySelectorAll(".options[data-q]").forEach(function (group) {
+        var q = group.dataset.q;
+        var opts = Array.from(group.querySelectorAll(".option"));
+        var selectedIdx = opts.findIndex(function (o) { return o.classList.contains("selected"); });
+        if (selectedIdx >= 0 && KEYS[q] && KEYS[q][selectedIdx] != null) {
+          state[q] = KEYS[q][selectedIdx];
+        }
+        group.addEventListener("click", function (e) {
+          var opt = e.target.closest(".option");
+          if (!opt || !group.contains(opt)) return;
+          var idx = opts.indexOf(opt);
+          if (KEYS[q] && KEYS[q][idx] != null) {
+            state[q] = KEYS[q][idx];
+            render();
+          }
+        });
+      });
+
+      function langSpans(pair) {
+        return '<span class="en">' + pair.en + '</span><span class="tl">' + pair.tl + '</span>';
+      }
+
+      function docItemHTML(item) {
+        return (
+          '<div class="doc-item">' +
+            '<div class="check"></div>' +
+            '<div class="doc-info">' +
+              '<b>' + langSpans(item.title) + '</b>' +
+              '<span>' + langSpans(item.sub) + '</span>' +
+              '<span class="tag' + (item.optional ? ' optional' : '') + '">' + langSpans(item.tag) + '</span>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      function buildItems() {
+        var doc = DOC_DATA[state.document] || DOC_DATA["barangay-clearance"];
+        var items = doc.base.slice();
+        if (state.firstTime === "yes") {
+          // insert proof of residence right after the ID
+          items.splice(1, 0, RESIDENCE_ITEM);
+        }
+        var extra = PURPOSE_ITEM[state.purpose];
+        if (extra) items.push(extra);
+        return { items: items, fee: doc.fee };
+      }
+
+      function render() {
+        var docLabel = DOC_LABEL[state.document] || DOC_LABEL["barangay-clearance"];
+        var purposeLabel = PURPOSE_LABEL[state.purpose] || PURPOSE_LABEL["school"];
+        var firstLabel = FIRSTTIME_LABEL[state.firstTime] || FIRSTTIME_LABEL.yes;
+
+        // recap chips on convo screens
+        document.querySelectorAll('[data-bind="document"]').forEach(function (el) {
+          el.innerHTML = langSpans(docLabel);
+        });
+        document.querySelectorAll('[data-bind="purpose"]').forEach(function (el) {
+          el.innerHTML = langSpans(purposeLabel);
+        });
+
+        // checklist heading + sub
+        var h2 = document.querySelector('[data-bind="checklist-heading"]');
+        if (h2) {
+          h2.innerHTML =
+            '<span class="en">For ' + docLabel.en + '</span>' +
+            '<span class="tl">Para sa ' + docLabel.tl + '</span>' +
+            '<small>' +
+              '<span class="en">' + purposeLabel.en + ' · ' + firstLabel.en + '</span>' +
+              '<span class="tl">' + purposeLabel.tl + ' · ' + firstLabel.tl + '</span>' +
+            '</small>';
+        }
+
+        var built = buildItems();
+        var list = document.querySelector('[data-bind="doc-list"]');
+        if (list) list.innerHTML = built.items.map(docItemHTML).join("");
+
+        var count = document.querySelector('[data-bind="item-count"]');
+        if (count) count.textContent = built.items.length + " items";
+
+        var fee = document.querySelector('[data-bind="fee"]');
+        if (fee) {
+          fee.innerHTML = built.fee === 0
+            ? '<span class="en">Free</span><span class="tl">Libre</span>'
+            : "₱" + built.fee + "<small>.00</small>";
+        }
+      }
+
+      render();
     </script>
   </body>
 </html>
