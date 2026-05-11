@@ -71,7 +71,11 @@
 
       .stage {
         min-height: 100vh;
-        padding: 56px 24px 80px;
+        padding: 40px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         background:
           radial-gradient(
             circle at 15% 10%,
@@ -87,13 +91,13 @@
       }
 
       .header {
-        max-width: 1280px;
-        margin: 0 auto 48px;
+        text-align: center;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         gap: 24px;
         flex-wrap: wrap;
+        margin-bottom: 32px;
       }
 
       .header-left {
@@ -119,13 +123,16 @@
         max-width: 420px;
       }
 
-      .grid {
-        max-width: 1280px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 36px 28px;
-        justify-items: center;
+      .slide {
+        display: none;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .slide.active {
+        display: flex;
       }
 
       /* Phone frame */
@@ -1370,6 +1377,59 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .btn-light[disabled] {
+        cursor: default;
+      }
+
+      .btn-light .save-spinner {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid rgba(15, 76, 92, 0.2);
+        border-top-color: var(--teal-800);
+        animation: save-spin 0.7s linear infinite;
+      }
+
+      .btn-light.is-loading .save-icon,
+      .btn-light.is-loading .save-check,
+      .btn-light:not(.is-loading) .save-spinner,
+      .btn-light:not(.is-saved) .save-check,
+      .btn-light.is-saved .save-icon {
+        display: none;
+      }
+
+      .save-label .save-loading,
+      .save-label .save-done {
+        display: none;
+      }
+
+      .btn-light.is-loading .save-label .save-idle,
+      .btn-light.is-saved .save-label .save-idle {
+        display: none;
+      }
+
+      .btn-light.is-loading .save-label .save-loading {
+        display: inline;
+      }
+
+      .btn-light.is-saved .save-label .save-done {
+        display: inline;
+      }
+
+      .btn-light.is-saved {
+        background: var(--green-50);
+        color: var(--green-600);
+      }
+
+      @keyframes save-spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       .btn-ghost-dark {
@@ -1574,19 +1634,6 @@
         padding: 0 18px;
       }
 
-      @media (max-width: 1180px) {
-        .grid {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-      }
-      @media (max-width: 800px) {
-        .grid {
-          grid-template-columns: 1fr;
-        }
-        .header p {
-          text-align: left;
-        }
-      }
     </style>
   </head>
   <body>
@@ -1597,9 +1644,9 @@
         </div>
       </div>
 
-      <div class="grid">
+      <div class="phone">
         <!-- ==================== 0. LANGUAGE ==================== -->
-        <div class="phone">
+        <div class="slide active">
           <div class="status-bar">
             <span>9:41</span>
             <span class="icons">
@@ -1758,7 +1805,7 @@
         </div>
 
         <!-- ==================== 1. LOCATION ==================== -->
-        <div class="phone">
+        <div class="slide">
           <div class="status-bar">
             <span>9:41</span>
             <span class="icons">
@@ -1926,7 +1973,7 @@
         </div>
 
         <!-- ==================== 2. BARANGAY PROFILE ==================== -->
-        <div class="phone">
+        <div class="slide">
           <div class="status-bar">
             <span>9:42</span>
             <span class="icons">
@@ -2050,7 +2097,7 @@
         </div>
 
         <!-- ==================== 3. CONVO Q1 ==================== -->
-        <div class="phone">
+        <div class="slide">
           <div class="status-bar">
             <span>9:41</span>
             <span class="icons">
@@ -2237,7 +2284,7 @@
         </div>
 
         <!-- ==================== 3. CONVO Q2 ==================== -->
-        <div class="phone">
+        <div class="slide">
           <div class="status-bar">
             <span>9:42</span>
             <span class="icons">
@@ -2450,7 +2497,7 @@
         </div>
 
         <!-- ==================== 4. CONVO Q3 ==================== -->
-        <div class="phone">
+        <div class="slide">
           <div class="status-bar">
             <span>9:42</span>
             <span class="icons">
@@ -2644,7 +2691,7 @@
         </div>
 
         <!-- ==================== 5. CHECKLIST ==================== -->
-        <div class="phone">
+        <div class="slide">
           <div
             class="status-bar"
             style="color: white; background: var(--teal-800)"
@@ -3033,7 +3080,7 @@
         </div>
 
         <!-- ==================== 6. CONFIRMATION ==================== -->
-        <div class="phone">
+        <div class="slide">
           <div
             class="status-bar"
             style="color: white; background: var(--teal-800)"
@@ -3182,8 +3229,9 @@
             </div>
 
             <div class="confirm-footer">
-              <button class="btn-light">
+              <button class="btn-light save-btn">
                 <svg
+                  class="save-icon"
                   width="16"
                   height="16"
                   viewBox="0 0 24 24"
@@ -3199,8 +3247,34 @@
                   <polyline points="12 2 12 15" />
                   <polyline points="7 7 12 2 17 7" />
                 </svg>
-                <span class="en">Save to phone</span>
-                <span class="tl">Save sa phone</span>
+                <span class="save-spinner" aria-hidden="true"></span>
+                <svg
+                  class="save-check"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span class="save-label">
+                  <span class="save-idle">
+                    <span class="en">Save to phone</span>
+                    <span class="tl">Save sa phone</span>
+                  </span>
+                  <span class="save-loading">
+                    <span class="en">Saving…</span>
+                    <span class="tl">Ini-save…</span>
+                  </span>
+                  <span class="save-done">
+                    <span class="en">Saved</span>
+                    <span class="tl">Na-save</span>
+                  </span>
+                </span>
               </button>
               <button class="btn-ghost-dark">
                 <span class="en">Show when I'm at the hall</span>
@@ -3211,7 +3285,7 @@
         </div>
 
         <!-- ==================== 7. CHAT ==================== -->
-        <div class="phone">
+        <div class="slide">
           <div
             class="status-bar"
             style="color: white; background: var(--teal-800)"
@@ -3422,17 +3496,17 @@
         });
       });
 
-      var phones = Array.from(document.querySelectorAll(".phone"));
+      var slides = Array.from(document.querySelectorAll(".slide"));
       function goToPhone(idx) {
-        if (idx < 0 || idx >= phones.length) return;
-        phones[idx].scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "center",
+        if (idx < 0 || idx >= slides.length) return;
+        slides.forEach(function (s) {
+          s.classList.remove("active");
         });
+        slides[idx].classList.add("active");
       }
       function phoneIndexOf(el) {
-        return phones.indexOf(el.closest(".phone"));
+        var slide = el.closest(".slide");
+        return slides.indexOf(slide);
       }
 
       document
@@ -3466,11 +3540,25 @@
         });
       });
 
+      document.querySelectorAll(".save-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          if (btn.classList.contains("is-loading")) return;
+          btn.classList.remove("is-saved");
+          btn.classList.add("is-loading");
+          btn.disabled = true;
+          setTimeout(function () {
+            btn.classList.remove("is-loading");
+            btn.classList.add("is-saved");
+            btn.disabled = false;
+          }, 1200);
+        });
+      });
+
       document.querySelectorAll(".back").forEach(function (btn) {
         btn.addEventListener("click", function (e) {
           var idx = phoneIndexOf(e.currentTarget);
-          var phone = phones[idx];
-          if (phone && phone.querySelector(".s-confirm")) {
+          var slide = slides[idx];
+          if (slide && slide.querySelector(".s-confirm")) {
             goToPhone(0);
           } else {
             goToPhone(idx - 1);
