@@ -1068,6 +1068,93 @@
         color: var(--ink-500);
       }
 
+      /* === Best time card === */
+      .besttime-card {
+        background: white;
+        border: 1px solid var(--warm-line);
+        border-radius: 16px;
+        padding: 16px 18px;
+        margin-bottom: 20px;
+      }
+
+      .besttime-card .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .besttime-card .label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .besttime-card .tag {
+        background: var(--green-50);
+        color: var(--green-600);
+        font-size: 10px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 999px;
+      }
+
+      .besttime-card .rec {
+        margin-top: 10px;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--teal-900);
+      }
+
+      .besttime-card .sub {
+        margin-top: 2px;
+        font-size: 12px;
+        color: var(--ink-500);
+      }
+
+      .besttime-card .bar {
+        margin-top: 14px;
+        display: flex;
+        gap: 4px;
+      }
+
+      .besttime-card .bar .seg {
+        flex: 1;
+        height: 6px;
+        border-radius: 3px;
+      }
+
+      .besttime-card .bar .seg.morning {
+        background: var(--green-500);
+      }
+
+      .besttime-card .bar .seg.midday {
+        background: #f0b429;
+      }
+
+      .besttime-card .bar .seg.afternoon {
+        background: #e05c3a;
+      }
+
+      .besttime-card .bar-labels {
+        margin-top: 6px;
+        display: flex;
+        gap: 4px;
+      }
+
+      .besttime-card .bar-labels > div {
+        flex: 1;
+        font-size: 10px;
+        color: var(--ink-500);
+      }
+
+      .besttime-card .footnote {
+        margin-top: 10px;
+        font-size: 11px;
+        color: var(--ink-300);
+      }
+
       /* fee row */
       .fee-card {
         margin-top: 20px;
@@ -2704,6 +2791,47 @@
             </div>
 
             <div class="checklist-body">
+              <div class="besttime-card">
+                <div class="top">
+                  <div class="label">
+                    <span class="en">When to go</span>
+                    <span class="tl">Pinakamabuting oras</span>
+                  </div>
+                  <div class="tag">
+                    <span class="en">Best window</span>
+                    <span class="tl">Pinakamainam</span>
+                  </div>
+                </div>
+                <div class="rec">9 – 11am</div>
+                <div class="sub">
+                  <span class="en">Quietest time · avg. 5 min wait</span>
+                  <span class="tl">Pinaka-tahimik · ~5 minuto lang</span>
+                </div>
+                <div class="bar">
+                  <div class="seg morning"></div>
+                  <div class="seg midday"></div>
+                  <div class="seg afternoon"></div>
+                </div>
+                <div class="bar-labels">
+                  <div>
+                    <span class="en">Morning</span>
+                    <span class="tl">Morning</span>
+                  </div>
+                  <div>
+                    <span class="en">Midday</span>
+                    <span class="tl">Midday</span>
+                  </div>
+                  <div>
+                    <span class="en">Afternoon</span>
+                    <span class="tl">Afternoon</span>
+                  </div>
+                </div>
+                <div class="footnote">
+                  <span class="en">Based on typical patterns at this barangay</span>
+                  <span class="tl">Base sa karaniwang pattern dito</span>
+                </div>
+              </div>
+
               <div class="section-label">
                 <span>
                   <span class="en">Bring with you</span>
