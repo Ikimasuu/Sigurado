@@ -1634,6 +1634,147 @@
         padding: 0 18px;
       }
 
+      /* === Auth (login / register) === */
+      .s-auth {
+        padding: 20px 28px 24px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      .s-auth .wordmark {
+        margin-bottom: 28px;
+      }
+      .s-auth h2 {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--teal-900);
+        letter-spacing: -0.025em;
+        line-height: 1.25;
+        margin-top: 32px;
+      }
+      .s-auth p.lede {
+        font-size: 13px;
+        color: var(--ink-500);
+        margin-top: 6px;
+        line-height: 1.5;
+      }
+      .auth-tabs {
+        margin-top: 24px;
+        display: flex;
+        background: var(--neutral-card);
+        border: 1.5px solid var(--ink-100);
+        border-radius: 12px;
+        padding: 4px;
+        gap: 4px;
+      }
+      .auth-tab {
+        flex: 1;
+        padding: 10px 12px;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink-500);
+        background: transparent;
+        border: none;
+        border-radius: 9px;
+        cursor: pointer;
+        letter-spacing: -0.01em;
+      }
+      .auth-tab.is-active {
+        background: var(--teal-800);
+        color: white;
+        box-shadow: 0 2px 6px rgba(15, 76, 92, 0.18);
+      }
+      .auth-form {
+        margin-top: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .auth-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .auth-field label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-700);
+        letter-spacing: -0.005em;
+      }
+      .auth-input {
+        display: flex;
+        align-items: center;
+        background: var(--neutral-card);
+        border: 1.5px solid var(--ink-100);
+        border-radius: 14px;
+        padding: 0 14px;
+        transition: border-color 0.15s ease;
+      }
+      .auth-input:focus-within {
+        border-color: var(--teal-700);
+      }
+      .auth-input .prefix {
+        font-size: 14px;
+        color: var(--ink-500);
+        font-weight: 600;
+        padding-right: 8px;
+        border-right: 1px solid var(--ink-100);
+        margin-right: 10px;
+      }
+      .auth-input input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        padding: 14px 0;
+        font-family: inherit;
+        font-size: 14px;
+        color: var(--ink-900);
+        letter-spacing: -0.01em;
+        min-width: 0;
+      }
+      .auth-input input::placeholder {
+        color: var(--ink-300);
+      }
+      .auth-field.is-register {
+        display: none;
+      }
+      .s-auth.mode-register .auth-field.is-register {
+        display: flex;
+      }
+      .auth-help {
+        text-align: right;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--teal-800);
+        margin-top: 2px;
+        cursor: pointer;
+      }
+      .s-auth.mode-register .auth-help {
+        display: none;
+      }
+      .auth-actions {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-bottom: 12px;
+      }
+      .auth-foot {
+        font-size: 11px;
+        color: var(--ink-500);
+        text-align: center;
+        line-height: 1.5;
+        padding: 0 8px;
+      }
+      .auth-foot a {
+        color: var(--teal-800);
+        font-weight: 600;
+        text-decoration: none;
+        border-bottom: 1px solid var(--ink-300);
+      }
+
     </style>
   </head>
   <body>
@@ -1801,6 +1942,111 @@
               You can change this later in Settings.<br />
             </p>
             <!-- <div class="screen-label">01 · Language</div> -->
+          </div>
+        </div>
+
+        <!-- ==================== 0.5. AUTH (LOGIN / REGISTER) ==================== -->
+        <div class="slide">
+          <div class="status-bar">
+            <span>9:41</span>
+            <span class="icons">
+              <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor">
+                <rect x="0" y="6" width="3" height="4" rx="0.5" />
+                <rect x="4" y="4" width="3" height="6" rx="0.5" />
+                <rect x="8" y="2" width="3" height="8" rx="0.5" />
+                <rect x="12" y="0" width="3" height="10" rx="0.5" />
+              </svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.2">
+                <path d="M1 4.5C3 2.5 5.5 1.5 8 1.5C10.5 1.5 13 2.5 15 4.5" />
+                <path d="M3.5 6.5C5 5.2 6.5 4.5 8 4.5C9.5 4.5 11 5.2 12.5 6.5" />
+                <circle cx="8" cy="9" r="1.2" fill="currentColor" />
+              </svg>
+              <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+                <rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" stroke-opacity="0.4" />
+                <rect x="2" y="2" width="15" height="7" rx="1" fill="currentColor" />
+                <rect x="21.5" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" fill-opacity="0.4" />
+              </svg>
+            </span>
+          </div>
+
+          <div class="screen s-auth mode-login">
+            <div class="wordmark">Sigurado</div>
+
+            <h2 data-bind="auth-title">
+              <span class="en">Welcome back</span>
+              <span class="tl">Maligayang pagbabalik</span>
+            </h2>
+            <p class="lede" data-bind="auth-lede">
+              <span class="en">Sign in to keep your checklists and progress.</span>
+              <span class="tl">Mag-sign in para tandaan ang iyong listahan at progreso.</span>
+            </p>
+
+            <div class="auth-tabs" role="tablist">
+              <button type="button" class="auth-tab is-active" data-mode="login">
+                <span class="en">Sign in</span>
+                <span class="tl">Mag-sign in</span>
+              </button>
+              <button type="button" class="auth-tab" data-mode="register">
+                <span class="en">Create account</span>
+                <span class="tl">Gumawa ng account</span>
+              </button>
+            </div>
+
+            <div class="auth-form">
+              <div class="auth-field is-register">
+                <label>
+                  <span class="en">Full name</span>
+                  <span class="tl">Buong pangalan</span>
+                </label>
+                <div class="auth-input">
+                  <input type="text" autocomplete="name" placeholder="Juan dela Cruz" />
+                </div>
+              </div>
+
+              <div class="auth-field">
+                <label>
+                  <span class="en">Mobile number</span>
+                  <span class="tl">Numero ng cellphone</span>
+                </label>
+                <div class="auth-input">
+                  <span class="prefix">+63</span>
+                  <input type="tel" autocomplete="tel-national" placeholder="917 123 4567" inputmode="numeric" />
+                </div>
+              </div>
+
+              <div class="auth-field">
+                <label>
+                  <span class="en">Password</span>
+                  <span class="tl">Password</span>
+                </label>
+                <div class="auth-input">
+                  <input type="password" autocomplete="current-password" placeholder="••••••••" />
+                </div>
+              </div>
+
+              <div class="auth-help">
+                <span class="en">Forgot password?</span>
+                <span class="tl">Nakalimutan ang password?</span>
+              </div>
+            </div>
+
+            <div class="auth-actions">
+              <button class="btn-primary auth-continue">
+                <span class="en" data-bind="auth-cta-en">Sign in</span>
+                <span class="tl" data-bind="auth-cta-tl">Mag-sign in</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M13 5l7 7-7 7" />
+                </svg>
+              </button>
+              <button class="btn-secondary auth-skip">
+                <span class="en"><u>Skip for now</u></span>
+                <span class="tl"><u>Skip muna</u></span>
+              </button>
+              <p class="auth-foot">
+                <span class="en">By continuing, you agree to our <a>Terms</a> and <a>Privacy Policy</a>.</span>
+                <span class="tl">Sa pagpapatuloy, sumasang-ayon ka sa aming <a>Terms</a> at <a>Privacy Policy</a>.</span>
+              </p>
+            </div>
           </div>
         </div>
 
@@ -3511,7 +3757,7 @@
 
       document
         .querySelectorAll(
-          ".fab-next, .ready-cta, .s-location .btn-primary, .s-barangay .btn-primary",
+          ".fab-next, .ready-cta, .s-location .btn-primary, .s-barangay .btn-primary, .auth-continue, .auth-skip",
         )
         .forEach(function (btn) {
           btn.addEventListener("click", function (e) {
@@ -3563,6 +3809,39 @@
           } else {
             goToPhone(idx - 1);
           }
+        });
+      });
+
+      /* ============ auth tabs: login / register toggle ============ */
+      document.querySelectorAll(".auth-tabs").forEach(function (tabs) {
+        var auth = tabs.closest(".s-auth");
+        var cta = auth && auth.querySelector(".auth-continue");
+        var ctaEn = cta && cta.querySelector('[data-bind="auth-cta-en"]');
+        var ctaTl = cta && cta.querySelector('[data-bind="auth-cta-tl"]');
+        var titleEn = auth && auth.querySelector('[data-bind="auth-title"] .en');
+        var titleTl = auth && auth.querySelector('[data-bind="auth-title"] .tl');
+        var ledeEn = auth && auth.querySelector('[data-bind="auth-lede"] .en');
+        var ledeTl = auth && auth.querySelector('[data-bind="auth-lede"] .tl');
+
+        tabs.addEventListener("click", function (e) {
+          var btn = e.target.closest(".auth-tab");
+          if (!btn) return;
+          var mode = btn.dataset.mode;
+          tabs.querySelectorAll(".auth-tab").forEach(function (t) {
+            t.classList.toggle("is-active", t === btn);
+          });
+          auth.classList.toggle("mode-register", mode === "register");
+          auth.classList.toggle("mode-login", mode === "login");
+          if (ctaEn) ctaEn.textContent = mode === "register" ? "Create account" : "Sign in";
+          if (ctaTl) ctaTl.textContent = mode === "register" ? "Gumawa ng account" : "Mag-sign in";
+          if (titleEn) titleEn.textContent = mode === "register" ? "Create your account" : "Welcome back";
+          if (titleTl) titleTl.textContent = mode === "register" ? "Gumawa ng account" : "Maligayang pagbabalik";
+          if (ledeEn) ledeEn.textContent = mode === "register"
+            ? "Save your checklists and pick up where you left off."
+            : "Sign in to keep your checklists and progress.";
+          if (ledeTl) ledeTl.textContent = mode === "register"
+            ? "I-save ang iyong listahan at ituloy kung saan ka tumigil."
+            : "Mag-sign in para tandaan ang iyong listahan at progreso.";
         });
       });
 
